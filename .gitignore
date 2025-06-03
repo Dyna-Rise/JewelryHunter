@@ -92,4 +92,6 @@ sysinfo.txt
 *.unitypackage
 
 .vs/
+Assets/TextMesh Pro/
+
 

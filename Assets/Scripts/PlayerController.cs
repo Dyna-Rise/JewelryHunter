@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
 {
     private float axisH; //左右のキーの値を格納
     Rigidbody2D rbody; //Rigidbody2Dの情報を扱う為の媒体
+    Animator animator; //Animatorの情報を扱う為の媒体
+
     public float speed = 3.0f; //歩くスピード 
     bool isJump; //ジャンプ中かどうか
     bool onGround; //地面判定
@@ -20,6 +22,9 @@ public class PlayerController : MonoBehaviour
         //変数rbodyに宿した。以後、Rigidbody2Dコンポーネントの
         //機能はrbodyという変数を通してプログラム側から活用できる
         rbody = GetComponent<Rigidbody2D>();
+
+        //PlayerについているAnimatorコンポーネントを変数animatorに宿した
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -34,12 +39,19 @@ public class PlayerController : MonoBehaviour
         if(axisH > 0)
         {
             transform.localScale = new Vector3(1, 1, 1);
+            animator.SetBool("Run",true); //担当しているコントローラーのパラメータを変える
         }
         //でなければもしaxisHが負の数なら左向き
         else if(axisH < 0)
         {
             transform.localScale = new Vector3(-1, 1, 1);
+            animator.SetBool("run", true); //担当しているコントローラーのパラメータを変える
         }
+        else
+        {
+            animator.SetBool("run", false); //担当しているコントローラーのパラメータを変える
+        }
+
 
         //もしもジャンプボタンがおされたら
         if (Input.GetButtonDown("Jump"))
@@ -48,7 +60,6 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-
 
     private void FixedUpdate()
     {
@@ -73,11 +84,31 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     public void Jump()
     {
         //地面判定がfalseならジャンプフラグは立てない
-        if(onGround) isJump = true;
+        if (onGround)
+        {
+            isJump = true;
+            animator.SetTrigger("jump"); //ジャンプアニメのためのトリガー発動
+        }
+    }
+
+    //何かとぶつかったら発動するメソッド
+    //ぶつかった相手のCollider情報を引数collisionに入れる
+    //相手にColliderがついていないと意味がない
+    //※相手のColliderがisTriggerであること
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Goal")
+        {
+            GameController.gameState = "gameclear";
+        }
+
+        if (collision.gameObject.tag == "Dead")
+        {
+            GameController.gameState = "gameover";
+        }
     }
 
 }
