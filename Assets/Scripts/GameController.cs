@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,9 @@ public class GameController : MonoBehaviour
     public GameObject restartButton; //リスタートボタン
     public GameObject nextButton; //ネクストボタン
 
+    TimeController timeCnt; //TimeControllerスクリプトを取得する
+
+    public TextMeshProUGUI timeText; //TimeTextオブジェクトが持っているTextMeshProコンポーネントの情報を取得
 
     // Start is called before the first frame update
     void Start()
@@ -27,13 +31,32 @@ public class GameController : MonoBehaviour
         
         buttonPanel.SetActive(false); //オブジェクトを非表示
 
+        //TimeControllerコンポーネントの情報を取得
+        timeCnt = GetComponent<TimeController>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(gameState == "playing")
+        {
+            //カウントダウンの変数currentTimeをUIに連動
+            //timeCntのcurrentTime(float型)をまずintに型変換してから、
+            //ToString()で文字列に変換し、timeText(TextMeshPro)のtext欄に代入
+            timeText.text = ((int)timeCnt.currentTime).ToString();
+
+            //もしcurrentTimeが0になったらゲームオーバー
+            if(timeCnt.currentTime <= 0)
+            {
+                GameObject player = GameObject.FindGameObjectWithTag("Player"); //プレイヤーを探す
+                //探し出したプレイヤーが持っているPlayerControllerコンポーネントのGameOverメソッドを発動
+                player.GetComponent<PlayerController>().GameOver();
+            }
+
+        }
+
         //ゲームの状態がクリアまたはオーバーの時、ボタンを復活させたい
-        if(gameState == "gameclear" || gameState == "gameover")
+        else if(gameState == "gameclear" || gameState == "gameover")
         {
             //ステージタイトルを復活
             stageTitle.SetActive(true);
@@ -63,4 +86,5 @@ public class GameController : MonoBehaviour
     {
         stageTitle.SetActive(false); //オブジェクトを非表示
     }
+
 }

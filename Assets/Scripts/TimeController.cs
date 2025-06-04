@@ -26,14 +26,19 @@ public class TimeController : MonoBehaviour
         }
 
         //経過時間
-        pastTime += Time.deltaTime;
+        pastTime += Time.deltaTime; //1フレームあたりにかかる時間
 
         //残り時間の計算
         currentTime = gameTime - pastTime; 
+        
+        //残り時間が0秒以下であれば
         if(currentTime <= 0)
         {
             isTimeOver = true; //カウントダウンしないフラグをON
-            currentTime = 0f;
+            currentTime = 0f; //残り時間を0にピッタリ整える
         }
+
+        //コンソールパネルに情報出力
+        Debug.Log("残り時間：" + currentTime);
     }
 }
