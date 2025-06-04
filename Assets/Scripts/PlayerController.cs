@@ -133,6 +133,7 @@ public class PlayerController : MonoBehaviour
         rbody.AddForce(new Vector2(0,5), ForceMode2D.Impulse);
         //当たり判定もカット
         GetComponent<CapsuleCollider2D>().enabled = false;
+
     }
 
     //プレイヤーの動きを停止
