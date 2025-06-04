@@ -30,6 +30,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(GameController.gameState != "playing")
+        {
+            return; //Updateの処理を強制終了
+        }
+
         //左右のキーがおされたら、どっちの値だったのかをaxisHに格納
         //引数Horizontalの場合：水平方向のキーが何か押された場合
         //左なら-1、右なら1、何も押されてないのであれば常に0を返すメソッド
@@ -39,7 +44,7 @@ public class PlayerController : MonoBehaviour
         if(axisH > 0)
         {
             transform.localScale = new Vector3(1, 1, 1);
-            animator.SetBool("Run",true); //担当しているコントローラーのパラメータを変える
+            animator.SetBool("run",true); //担当しているコントローラーのパラメータを変える
         }
         //でなければもしaxisHが負の数なら左向き
         else if(axisH < 0)
@@ -102,13 +107,39 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Goal")
         {
-            GameController.gameState = "gameclear";
+            Goal();
         }
 
         if (collision.gameObject.tag == "Dead")
         {
-            GameController.gameState = "gameover";
+            GameOver();
         }
+    }
+
+    public void Goal()
+    {
+        GameController.gameState = "gameclear";
+        animator.SetBool("gameClear",true); //PlayerClearアニメをON
+        PlayerStop(); //動きを止める
+    }
+
+    public void GameOver()
+    {
+        GameController.gameState = "gameover";
+        animator.SetBool("gameOver", true);
+        PlayerStop(); //動きを止める
+
+        //プレイヤーを上に跳ね上げる
+        rbody.AddForce(new Vector2(0,5), ForceMode2D.Impulse);
+        //当たり判定もカット
+        GetComponent<CapsuleCollider2D>().enabled = false;
+    }
+
+    //プレイヤーの動きを停止
+    public void PlayerStop()
+    {
+        //速度を0にして止める
+        rbody.velocity = new Vector2(0, 0);
     }
 
 }
