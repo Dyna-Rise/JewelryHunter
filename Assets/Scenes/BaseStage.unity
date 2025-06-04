@@ -2281,6 +2281,8 @@ MonoBehaviour:
   gameClearSprite: {fileID: 21300000, guid: d1c932614a99b4ceb82bcbaebbad734f, type: 3}
   gameOverSprite: {fileID: 21300000, guid: 37fb1bee617714dd0a5b0c2ed389cb50, type: 3}
   buttonPanel: {fileID: 1473052877}
+  restartButton: {fileID: 1026229570}
+  nextButton: {fileID: 54103962}
 --- !u!1 &1473052877
 GameObject:
   m_ObjectHideFlags: 0

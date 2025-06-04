@@ -13,6 +13,9 @@ public class GameController : MonoBehaviour
 
 
     public GameObject buttonPanel; //ボタンパネルのUIオブジェクト
+    public GameObject restartButton; //リスタートボタン
+    public GameObject nextButton; //ネクストボタン
+
 
     // Start is called before the first frame update
     void Start()
@@ -42,10 +45,16 @@ public class GameController : MonoBehaviour
         if(gameState == "gameclear")
         {
             stageTitle.GetComponent<Image>().sprite = gameClearSprite;
+
+            //restartButtonオブジェクトがもっているButtonコンポーネントの値であるinteractableをfalse　→　ボタン機能を停止
+            restartButton.GetComponent<Button>().interactable = false;
         }
         else if (gameState == "gameover")
         {
             stageTitle.GetComponent<Image>().sprite = gameOverSprite;
+
+            //nextButtonオブジェクトがもっているButtonコンポーネントの値であるinteractableをfalse　→　ボタン機能を停止
+            nextButton.GetComponent<Button>().interactable = false;
         }
     }
 
