@@ -29,7 +29,7 @@ public class CannonController : MonoBehaviour
     void Update()
     {
         //経過時間の観測
-        pastTime = Time.deltaTime;
+        pastTime += Time.deltaTime;
 
         //Playerとの距離チェックがtrueだったら（近かった）
         if (CheckLength(player.transform.position))
