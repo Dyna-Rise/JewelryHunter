@@ -10,6 +10,10 @@ public class EnemyController : MonoBehaviour
 
     public LayerMask groundLayer; //地面判定の対象レイヤー
 
+    public bool isTimeTurn; //時間で反転させるかどうかフラグ
+    public float turnTime; //反転のインターバル
+    float pastTime; //経過時間
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,11 +26,30 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (GameController.gameState == "gameclear")
+        {
+            return;
+        }
+
+        //時間で反転させるフラグが立っていれば
+        if (isTimeTurn)
+        {
+            pastTime += Time.deltaTime; //経過時間
+            if(pastTime >= turnTime) //インターバルだけ時間経過しているようなら
+            {
+                pastTime = 0; //次に備えてリセット
+                Turn(); //反転
+            }
+        }
     }
 
     private void FixedUpdate()
     {
+        if (GameController.gameState == "gameclear")
+        {
+            return;
+        }
+
         bool onGround = Physics2D.CircleCast(
             transform.position, //センサーの発生位置
             0.5f, //円の半径
