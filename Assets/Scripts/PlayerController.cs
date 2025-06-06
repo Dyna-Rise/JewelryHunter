@@ -114,6 +114,13 @@ public class PlayerController : MonoBehaviour
         {
             GameOver();
         }
+
+        if(collision.gameObject.tag == "Item") //Itemに触れたら
+        {
+            ItemData itemdata = collision.gameObject.GetComponent<ItemData>(); //ぶつかったItemのスクリプトを取得
+            GameController.stageScore += itemdata.value; //ぶつかったItemのスクリプトに記されているvalueの値をstageScoreに加算
+            Destroy(collision.gameObject); //用が済んだので相手の本体を抹消
+        }
     }
 
     public void Goal()

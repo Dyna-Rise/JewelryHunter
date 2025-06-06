@@ -21,9 +21,16 @@ public class GameController : MonoBehaviour
 
     public TextMeshProUGUI timeText; //TimeTextオブジェクトが持っているTextMeshProコンポーネントの情報を取得
 
+    public TextMeshProUGUI scoreText; //UIのテキスト
+    public static int totaleScore; //ゲームの合計得点
+    public static int stageScore; //そのステージ中に手に入れたスコア
+
+
     // Start is called before the first frame update
     void Start()
     {
+        stageScore = 0; //ステージスコアをリセット
+
         //ゲーム開始と同時にゲームステータスを"playing"
         gameState = "playing";
 
@@ -38,6 +45,9 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        UpdateScore(); //スコア更新のメソッド
+
         if(gameState == "playing")
         {
             //カウントダウンの変数currentTimeをUIに連動
@@ -63,21 +73,29 @@ public class GameController : MonoBehaviour
 
             //ボタンの復活
             buttonPanel.SetActive(true);
-        }
+        
 
-        if(gameState == "gameclear")
-        {
-            stageTitle.GetComponent<Image>().sprite = gameClearSprite;
+            if(gameState == "gameclear")
+            {
+                stageTitle.GetComponent<Image>().sprite = gameClearSprite;
 
-            //restartButtonオブジェクトがもっているButtonコンポーネントの値であるinteractableをfalse　→　ボタン機能を停止
-            restartButton.GetComponent<Button>().interactable = false;
-        }
-        else if (gameState == "gameover")
-        {
-            stageTitle.GetComponent<Image>().sprite = gameOverSprite;
+                //restartButtonオブジェクトがもっているButtonコンポーネントの値であるinteractableをfalse　→　ボタン機能を停止
+                restartButton.GetComponent<Button>().interactable = false;
 
-            //nextButtonオブジェクトがもっているButtonコンポーネントの値であるinteractableをfalse　→　ボタン機能を停止
-            nextButton.GetComponent<Button>().interactable = false;
+                totaleScore += stageScore; //トータルスコアの更新
+                stageScore = 0; //トータルに数字を渡せたので次に備えて0にリセット
+                totaleScore += (int)(timeCnt.currentTime * 10); //タイムボーナスをトータルにまぜて完了
+
+            }
+            else if (gameState == "gameover")
+            {
+                stageTitle.GetComponent<Image>().sprite = gameOverSprite;
+
+                //nextButtonオブジェクトがもっているButtonコンポーネントの値であるinteractableをfalse　→　ボタン機能を停止
+                nextButton.GetComponent<Button>().interactable = false;
+            }
+
+            gameState = "gameend"; //重複して何回も同じ処理をしないように
         }
     }
 
@@ -85,6 +103,12 @@ public class GameController : MonoBehaviour
     void InactiveImage()
     {
         stageTitle.SetActive(false); //オブジェクトを非表示
+    }
+
+    void UpdateScore()
+    {
+        //UIであるスコアテキスト(TextMeshProUGUIのテキスト欄）にトータルとステージの合計値を代入※文字列変換が必須
+        scoreText.text = (stageScore + totaleScore).ToString();
     }
 
 }

@@ -15,11 +15,13 @@ public class CameraController : MonoBehaviour
     public bool isForceScrollY; // Y 強制スクロールフラグ
     public float forceScrollSpeedY = 0.5f; //スクロールスピード
 
+    public GameObject subScreen; //サブスクリーン
+
     // Update is called once per frame
     void Update()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if(player != null)
+        if (player != null)
         {
             float currentX = player.transform.position.x; //プレイヤーのX座標を取得
             float currentY = player.transform.position.y; //プレイヤーのY座標を取得
@@ -30,11 +32,11 @@ public class CameraController : MonoBehaviour
             if (isForceScrollY) currentY = transform.position.y + (forceScrollSpeedY * Time.deltaTime);
 
             //リミットで止まる
-            if(currentX < leftLimit)
+            if (currentX < leftLimit)
             {
                 currentX = leftLimit;
             }
-            else if(currentX > rightLimit)
+            else if (currentX > rightLimit)
             {
                 currentX = rightLimit;
             }
@@ -50,6 +52,13 @@ public class CameraController : MonoBehaviour
 
             //XとYはプレイヤーと同じ、Z軸は距離感を保つ
             transform.position = new Vector3(currentX, currentY, transform.position.z);
+
+            //サブスクリーンはカメラより鈍い動きで連動させる
+            if (subScreen != null)
+            {
+                subScreen.transform.position = new Vector3(currentX / 2.0f,subScreen.transform.position.y, subScreen.transform.position.z);
+            }
+
         }
     }
 }
