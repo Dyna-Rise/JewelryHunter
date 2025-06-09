@@ -25,6 +25,9 @@ public class GameController : MonoBehaviour
     public static int totalScore; //ゲームの合計得点
     public static int stageScore; //そのステージ中に手に入れたスコア
 
+    AudioSource audio; //AudioSourceコンポーネントの情報取得
+    public AudioClip meGameClear; //ゲームクリアの音源
+    public AudioClip meGameOver; //ゲームオーバーの音源
 
     // Start is called before the first frame update
     void Start()
@@ -68,14 +71,17 @@ public class GameController : MonoBehaviour
         //ゲームの状態がクリアまたはオーバーの時、ボタンを復活させたい
         else if(gameState == "gameclear" || gameState == "gameover")
         {
+            audio = GetComponent<AudioSource>();
+
             //ステージタイトルを復活
             stageTitle.SetActive(true);
 
             //ボタンの復活
             buttonPanel.SetActive(true);
-        
 
-            if(gameState == "gameclear")
+            audio.Stop(); //曲を止める
+
+            if (gameState == "gameclear")
             {
                 stageTitle.GetComponent<Image>().sprite = gameClearSprite;
 
@@ -86,6 +92,12 @@ public class GameController : MonoBehaviour
                 stageScore = 0; //トータルに数字を渡せたので次に備えて0にリセット
                 totalScore += (int)(timeCnt.currentTime * 10); //タイムボーナスをトータルにまぜて完了
 
+               
+                //audio.clip = meGameClear; //曲切り替え
+                //audio.loop = false; //ループをオフ
+                //audio.Play(); //曲再生
+
+                audio.PlayOneShot(meGameClear); //1回だけ指定のサウンドを鳴らす
             }
             else if (gameState == "gameover")
             {
@@ -93,6 +105,9 @@ public class GameController : MonoBehaviour
 
                 //nextButtonオブジェクトがもっているButtonコンポーネントの値であるinteractableをfalse　→　ボタン機能を停止
                 nextButton.GetComponent<Button>().interactable = false;
+
+                //ゲームオーバー音を一度だけ鳴らす
+                audio.PlayOneShot(meGameOver);
             }
 
             gameState = "gameend"; //重複して何回も同じ処理をしないように

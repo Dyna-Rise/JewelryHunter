@@ -15,9 +15,14 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer; //地面判定の対象のレイヤーが何かを決めておく
     public float jump = 9.0f; //ジャンプ力
 
+    AudioSource audio;
+    public AudioClip jumpSE;
+
     // Start is called before the first frame update
     void Start()
     {
+        audio = GetComponent<AudioSource>();
+    
         //PlayerについているRigidbody2Dコンポーネントを
         //変数rbodyに宿した。以後、Rigidbody2Dコンポーネントの
         //機能はrbodyという変数を通してプログラム側から活用できる
@@ -96,6 +101,7 @@ public class PlayerController : MonoBehaviour
         {
             isJump = true;
             animator.SetTrigger("jump"); //ジャンプアニメのためのトリガー発動
+            audio.PlayOneShot(jumpSE);
         }
     }
 
