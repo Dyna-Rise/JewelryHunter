@@ -29,6 +29,8 @@ public class GameController : MonoBehaviour
     public AudioClip meGameClear; //ゲームクリアの音源
     public AudioClip meGameOver; //ゲームオーバーの音源
 
+    public GameObject mobilePanel; //モバイルパネルの取得
+
     // Start is called before the first frame update
     void Start()
     {
@@ -71,6 +73,9 @@ public class GameController : MonoBehaviour
         //ゲームの状態がクリアまたはオーバーの時、ボタンを復活させたい
         else if(gameState == "gameclear" || gameState == "gameover")
         {
+            //ゲームクリア後などにPlayerがモバイルUI経由で触られないようにUIを消しておく
+            mobilePanel.SetActive(false);
+
             audio = GetComponent<AudioSource>();
 
             //ステージタイトルを復活
@@ -124,6 +129,13 @@ public class GameController : MonoBehaviour
     {
         //UIであるスコアテキスト(TextMeshProUGUIのテキスト欄）にトータルとステージの合計値を代入※文字列変換が必須
         scoreText.text = (stageScore + totalScore).ToString();
+    }
+
+    //GameControlerからもPlyerControllerのJump()を発動できるメソッド
+    public void PlayerJump()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player"); //プレイヤーを探す
+        player.GetComponent<PlayerController>().Jump();
     }
 
 }

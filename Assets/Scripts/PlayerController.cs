@@ -18,11 +18,13 @@ public class PlayerController : MonoBehaviour
     AudioSource audio;
     public AudioClip jumpSE;
 
+    bool isMobileInput; //モバイルの入力があったかどうか
+
     // Start is called before the first frame update
     void Start()
     {
         audio = GetComponent<AudioSource>();
-    
+
         //PlayerについているRigidbody2Dコンポーネントを
         //変数rbodyに宿した。以後、Rigidbody2Dコンポーネントの
         //機能はrbodyという変数を通してプログラム側から活用できる
@@ -35,7 +37,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(GameController.gameState != "playing")
+        if (GameController.gameState != "playing")
         {
             return; //Updateの処理を強制終了
         }
@@ -43,16 +45,21 @@ public class PlayerController : MonoBehaviour
         //左右のキーがおされたら、どっちの値だったのかをaxisHに格納
         //引数Horizontalの場合：水平方向のキーが何か押された場合
         //左なら-1、右なら1、何も押されてないのであれば常に0を返すメソッド
-        axisH = Input.GetAxisRaw("Horizontal");
+
+        //モバイル端末からの入力を検知してフラグが立っている間はキーボード情報は採用されない
+        if (!isMobileInput)
+        {
+            axisH = Input.GetAxisRaw("Horizontal");
+        }
 
         //もしaxisHが正の数なら右向き
-        if(axisH > 0)
+        if (axisH > 0)
         {
             transform.localScale = new Vector3(1, 1, 1);
-            animator.SetBool("run",true); //担当しているコントローラーのパラメータを変える
+            animator.SetBool("run", true); //担当しているコントローラーのパラメータを変える
         }
         //でなければもしaxisHが負の数なら左向き
-        else if(axisH < 0)
+        else if (axisH < 0)
         {
             transform.localScale = new Vector3(-1, 1, 1);
             animator.SetBool("run", true); //担当しているコントローラーのパラメータを変える
@@ -73,6 +80,11 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if(GameController.gameState != "playing")
+        {
+            return;
+        }
+
         //地面にいるかどうかをサークルキャストを使って判別
         onGround = Physics2D.CircleCast(
                 transform.position,　//Playerの基準点
@@ -89,7 +101,7 @@ public class PlayerController : MonoBehaviour
         if (isJump)
         {
             //Rigidbody2DのAddForceメソッドによって上に押し出す
-            rbody.AddForce(new Vector2(0,jump),ForceMode2D.Impulse);
+            rbody.AddForce(new Vector2(0, jump), ForceMode2D.Impulse);
             isJump = false;
         }
     }
@@ -121,7 +133,7 @@ public class PlayerController : MonoBehaviour
             GameOver();
         }
 
-        if(collision.gameObject.tag == "Item") //Itemに触れたら
+        if (collision.gameObject.tag == "Item") //Itemに触れたら
         {
             ItemData itemdata = collision.gameObject.GetComponent<ItemData>(); //ぶつかったItemのスクリプトを取得
             GameController.stageScore += itemdata.value; //ぶつかったItemのスクリプトに記されているvalueの値をstageScoreに加算
@@ -132,7 +144,7 @@ public class PlayerController : MonoBehaviour
     public void Goal()
     {
         GameController.gameState = "gameclear";
-        animator.SetBool("gameClear",true); //PlayerClearアニメをON
+        animator.SetBool("gameClear", true); //PlayerClearアニメをON
         PlayerStop(); //動きを止める
     }
 
@@ -143,7 +155,7 @@ public class PlayerController : MonoBehaviour
         PlayerStop(); //動きを止める
 
         //プレイヤーを上に跳ね上げる
-        rbody.AddForce(new Vector2(0,5), ForceMode2D.Impulse);
+        rbody.AddForce(new Vector2(0, 5), ForceMode2D.Impulse);
         //当たり判定もカット
         GetComponent<CapsuleCollider2D>().enabled = false;
 
@@ -154,6 +166,17 @@ public class PlayerController : MonoBehaviour
     {
         //速度を0にして止める
         rbody.velocity = new Vector2(0, 0);
+    }
+
+    public void MobileAxis(float axis)
+    {
+        axisH = axis; //MobileStick.cs経由で与えられた引数axisの値が入る（1か-1か)
+
+        //axisに値が入っていたということであれば
+        //モバイルUIが触られたということになるため
+        //モバイル入力フラグをONにする
+        if (axisH == 0) isMobileInput = false;
+        else isMobileInput = true;
     }
 
 }
