@@ -22,7 +22,7 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI timeText; //TimeTextオブジェクトが持っているTextMeshProコンポーネントの情報を取得
 
     public TextMeshProUGUI scoreText; //UIのテキスト
-    public static int totaleScore; //ゲームの合計得点
+    public static int totalScore; //ゲームの合計得点
     public static int stageScore; //そのステージ中に手に入れたスコア
 
 
@@ -82,9 +82,9 @@ public class GameController : MonoBehaviour
                 //restartButtonオブジェクトがもっているButtonコンポーネントの値であるinteractableをfalse　→　ボタン機能を停止
                 restartButton.GetComponent<Button>().interactable = false;
 
-                totaleScore += stageScore; //トータルスコアの更新
+                totalScore += stageScore; //トータルスコアの更新
                 stageScore = 0; //トータルに数字を渡せたので次に備えて0にリセット
-                totaleScore += (int)(timeCnt.currentTime * 10); //タイムボーナスをトータルにまぜて完了
+                totalScore += (int)(timeCnt.currentTime * 10); //タイムボーナスをトータルにまぜて完了
 
             }
             else if (gameState == "gameover")
@@ -108,7 +108,7 @@ public class GameController : MonoBehaviour
     void UpdateScore()
     {
         //UIであるスコアテキスト(TextMeshProUGUIのテキスト欄）にトータルとステージの合計値を代入※文字列変換が必須
-        scoreText.text = (stageScore + totaleScore).ToString();
+        scoreText.text = (stageScore + totalScore).ToString();
     }
 
 }
