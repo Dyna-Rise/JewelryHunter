@@ -38,10 +38,17 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>(); //Animatorを取ってくる
         nowAnime = stopAnime; //停止から開始する
         oldAnime = stopAnime; //停止から開始する
+
+        gameState = GameState.InGame; //ゲーム中にする
     }
 
     void Update()
     {
+        if(gameState != GameState.InGame)
+        {
+            return; //このフレームをキャンセル
+        }
+
         onGround = Physics2D.CircleCast(
             transform.position,　//どこから？
             0.2f, //円の半径は？
@@ -68,7 +75,7 @@ public class PlayerController : MonoBehaviour
 
         //アニメーション更新
         if(onGround) //地面の上
-        {
+        { 
             if(axisH == 0)
             {
                 nowAnime = stopAnime; //停止中
@@ -86,14 +93,17 @@ public class PlayerController : MonoBehaviour
         {
             oldAnime = nowAnime;
             animator.Play(nowAnime); //アニメーションの再生
-        }
-
-           
+        }           
     }
 
     void FixedUpdate()
     {
-        if(onGround || axisH != 0)
+        if (gameState != GameState.InGame)
+        {
+            return; //このフレームをキャンセル
+        }
+
+        if (onGround || axisH != 0)
         {
             //速度を更新する
             rbody.linearVelocity = new Vector2(axisH * speed, rbody.linearVelocity.y);
@@ -121,18 +131,24 @@ public class PlayerController : MonoBehaviour
     // ゴール
     public void Goal()
     {
-        
+        animator.Play(goalAnime);
+        gameState = GameState.GameClear; //ステータス変更
+        GameStop(); //ゲーム停止
     }
     // ゲームオーバー
     public void GameOver()
     {
-        
-        gameState = GameState.GameOver;
+        animator.Play(deadAnime);
+        gameState = GameState.GameOver; //ステータス変更
+        GameStop(); //ゲーム停止
+        //ゲームオーバー演出
+        GetComponent<CapsuleCollider2D>().enabled = false; //当たり判定を無効にする
+        rbody.AddForce(new Vector2(0,5),ForceMode2D.Impulse);//上に少し跳ね上げる
     }
 
-    // ゲーム停止
+    // ゲーム停止 Playerの左右の動作を封じる
     void GameStop()
     {
-
+        rbody.linearVelocity = new Vector2(0,0); //速度0にしてプレイヤーの動きを強制停止
     }
 }
