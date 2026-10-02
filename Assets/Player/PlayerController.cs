@@ -14,6 +14,11 @@ public class PlayerController : MonoBehaviour
     float axisH = 0.0f;             // 入力
     public float speed = 3.0f;      // 移動速度   
 
+    public float jump = 9.0f;
+    public LayerMask groundLayer;
+    bool goJump = false;
+    bool onGround = false;
+
     // ゲームの状態（テキストは誤植なのでここは次の記述が正解）
     public static GameState gameState = GameState.InGame;
 
@@ -25,6 +30,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        onGround = Physics2D.CircleCast(
+            transform.position,　//どこから？
+            0.2f, //円の半径は？
+            Vector2.down, //向き？
+            0.0f, //距離
+            groundLayer);
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            goJump = true;
+        }
+
         axisH = Input.GetAxisRaw("Horizontal");     //水平方向の入力をチェックする
 
 
@@ -42,9 +59,17 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        
-        //速度を更新する
-        rbody.linearVelocity = new Vector2(axisH * speed, rbody.linearVelocity.y);
+        if(onGround || axisH != 0)
+        {
+            //速度を更新する
+            rbody.linearVelocity = new Vector2(axisH * speed, rbody.linearVelocity.y);
+        }
+        if(onGround && goJump)
+        {
+            Vector2 jumpPw = new Vector2(0, jump);
+            rbody.AddForce(jumpPw, ForceMode2D.Impulse);
+            goJump = false;
+        }
     }
 
     // 接触開始
