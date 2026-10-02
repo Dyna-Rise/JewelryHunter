@@ -22,10 +22,22 @@ public class PlayerController : MonoBehaviour
     // ゲームの状態（テキストは誤植なのでここは次の記述が正解）
     public static GameState gameState = GameState.InGame;
 
+    //ア二メーション対応
+    Animator animator; //アニメーター
+    public string stopAnime = "PlayerStop";
+    public string moveAnime = "PlayerMove";
+    public string jumpAnime = "PlayerJump";
+    public string goalAnime = "PlayerGoal";
+    public string deadAnime = "PlayerOver";
+    string nowAnime = "";
+    string oldAnime = "";
+
     void Start()
     {
         rbody = this.GetComponent<Rigidbody2D>();   // Rigidbody2Dを取ってくる
-       
+        animator = GetComponent<Animator>(); //Animatorを取ってくる
+        nowAnime = stopAnime; //停止から開始する
+        oldAnime = stopAnime; //停止から開始する
     }
 
     void Update()
@@ -52,6 +64,28 @@ public class PlayerController : MonoBehaviour
         else if (axisH < 0.0f)
         {
             transform.localScale = new Vector2(-1, 1); // 左右反転させる
+        }
+
+        //アニメーション更新
+        if(onGround) //地面の上
+        {
+            if(axisH == 0)
+            {
+                nowAnime = stopAnime; //停止中
+            }
+            else
+            {
+                nowAnime = moveAnime; //移動
+            }
+        }
+        else
+        {
+            nowAnime = jumpAnime; //空中
+        }
+        if(nowAnime != oldAnime) //1フレーム前のクリップと異なっていれば発動
+        {
+            oldAnime = nowAnime;
+            animator.Play(nowAnime); //アニメーションの再生
         }
 
            
