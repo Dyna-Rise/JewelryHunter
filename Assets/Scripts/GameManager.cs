@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;               // UIを使うのに必要
+using UnityEngine.SceneManagement; //シーン切替に必要なクラスがある
 
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class GameManager : MonoBehaviour
 
     Image titleImage; //画像を表示するImageコンポーネント
     GameState gamestate = GameState.InGame; //ゲームの状態
+
+    public string nextSceneName; //次のシーン名
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -69,6 +72,19 @@ public class GameManager : MonoBehaviour
     {
         //テキストではハイライトされていませんがここも編集！テキストをみて完成させましょう
         mainImage.SetActive(false); //オブジェクトを非表示
+    }
+
+    //リスタート
+    public void Restart()
+    {
+        //現シーンの名前を引数に入れる
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    //次へ
+    public void Next()
+    {
+        SceneManager.LoadScene(nextSceneName);
     }
 
 }

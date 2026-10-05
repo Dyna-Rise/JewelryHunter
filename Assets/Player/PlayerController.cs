@@ -32,6 +32,12 @@ public class PlayerController : MonoBehaviour
     string nowAnime = "";
     string oldAnime = "";
 
+    //カメラ制御
+    public float camLeft = 0.0f; //カメラ左スクロールリミット
+    public float camRight = 0.0f; //カメラ右スクロールリミット
+    public float camTop = 0.0f; //カメラ上スクロールリミット
+    public float camBottom = 0.0f; //カメラ下スクロールリミット
+
     void Start()
     {
         rbody = this.GetComponent<Rigidbody2D>();   // Rigidbody2Dを取ってくる
@@ -93,7 +99,23 @@ public class PlayerController : MonoBehaviour
         {
             oldAnime = nowAnime;
             animator.Play(nowAnime); //アニメーションの再生
-        }           
+        }
+
+        //カメラ制御
+        float x;
+        float y;
+        //左の限界はcamLeft、右の限界はcamRight、その間であればPlayerの座標を追いかける
+        x = Mathf.Clamp(transform.position.x,camLeft,camRight);
+        y = Mathf.Clamp(transform.position.y,camBottom,camTop);
+
+        //カメラに与えるべき理想の値を変数に代入
+        Vector3 camPos = new Vector3(x, y, -10);
+        Camera.main.transform.position = camPos; //カメラのPositionに代入
+
+        //Camera.main.transform.position = new Vector3(Mathf.Clamp(transform.position.x, camLeft, camRight), Mathf.Clamp(transform.position.y, camBottom, camTop), -10);
+
+
+
     }
 
     void FixedUpdate()

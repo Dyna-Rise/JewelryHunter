@@ -334,7 +334,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2194653036918790176}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4230292689741834571}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: Restart
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &936481333759453633
 GameObject:
   m_ObjectHideFlags: 0
@@ -455,7 +467,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7338849798850494183}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4230292689741834571}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: Next
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2516038048221772054
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,6 +742,7 @@ MonoBehaviour:
   panel: {fileID: 48003163118789513}
   restartButton: {fileID: 604516299988411574}
   nextButton: {fileID: 936481333759453633}
+  nextSceneName: 
 --- !u!114 &6767473778611026309
 MonoBehaviour:
   m_ObjectHideFlags: 0
