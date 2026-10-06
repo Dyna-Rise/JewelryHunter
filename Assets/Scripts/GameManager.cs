@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;               // UIを使うのに必要
 using UnityEngine.SceneManagement; //シーン切替に必要なクラスがある
+using TMPro; //TextMeshProを扱うのに必要
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +17,11 @@ public class GameManager : MonoBehaviour
 
     public string nextSceneName; //次のシーン名
 
+    //時間制限追加
+    public GameObject timeBar; //時間表示イメージ
+    public GameObject timeText; //時間テキスト
+    TimeController timeCnt; //TimeControllerコンポーネント
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -23,6 +29,15 @@ public class GameManager : MonoBehaviour
         Invoke("InactiveImage",1.0f); //1秒後にInactiveImageメソッドを発動
         panel.SetActive(false); //パネルを即非表示
 
+        //時間制限追加
+        timeCnt = GetComponent<TimeController>();
+        if(timeCnt != null)
+        {
+            if(timeCnt.gameTime == 0.0f) //制限時間設定なしなら
+            {
+                timeBar.SetActive(false); //UIを隠す
+            }
+        }
     }
 
     // Update is called once per frame
@@ -45,6 +60,11 @@ public class GameManager : MonoBehaviour
             //titleImage.sprite = gameClearSpr;
 
             PlayerController.gameState = GameState.GameEnd;
+
+            if(timeCnt != null)
+            {
+                timeCnt.isTimeOver = true; //カウント停止
+            }
         }
         else if (PlayerController.gameState == GameState.GameOver)
         {
@@ -60,6 +80,11 @@ public class GameManager : MonoBehaviour
             mainImage.GetComponent<Image>().sprite = gameOverSpr;
 
             PlayerController.gameState = GameState.GameEnd;
+
+            if (timeCnt != null)
+            {
+                timeCnt.isTimeOver = true; //カウント停止
+            }
         }
         else if (PlayerController.gameState == GameState.InGame)
         {
