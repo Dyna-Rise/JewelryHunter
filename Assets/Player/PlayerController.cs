@@ -38,6 +38,15 @@ public class PlayerController : MonoBehaviour
     public float camTop = 0.0f; //カメラ上スクロールリミット
     public float camBottom = 0.0f; //カメラ下スクロールリミット
 
+    //多重スクロール
+    public GameObject subScreen; //サブスクリーン
+
+    //強制スクロール
+    public bool isForceScrollX = false; //X方向の強制スクロールフラグ
+    public float forceScrollSpeedX = 0.5f; //1秒間で動かすX距離
+    public bool isForceScrollY = false; //Y方向の強制スクロールフラグ
+    public float forceScrollSpeedY = 0.5f; //1秒間で動かすY距離
+
     void Start()
     {
         rbody = this.GetComponent<Rigidbody2D>();   // Rigidbody2Dを取ってくる
@@ -104,9 +113,26 @@ public class PlayerController : MonoBehaviour
         //カメラ制御
         float x;
         float y;
-        //左の限界はcamLeft、右の限界はcamRight、その間であればPlayerの座標を追いかける
-        x = Mathf.Clamp(transform.position.x,camLeft,camRight);
-        y = Mathf.Clamp(transform.position.y,camBottom,camTop);
+
+        if (isForceScrollX)
+        {
+            x = Camera.main.transform.position.x + (forceScrollSpeedX * Time.deltaTime);
+        }
+        else
+        {
+            //左の限界はcamLeft、右の限界はcamRight、その間であればPlayerの座標を追いかける
+            x = Mathf.Clamp(transform.position.x, camLeft, camRight);
+
+        }
+
+        if (isForceScrollY)
+        {
+            y = Camera.main.transform.position.y + (forceScrollSpeedY * Time.deltaTime);
+        }
+        else
+        {
+            y = Mathf.Clamp(transform.position.y, camBottom, camTop);
+        }
 
         //カメラに与えるべき理想の値を変数に代入
         Vector3 camPos = new Vector3(x, y, -10);
@@ -114,6 +140,13 @@ public class PlayerController : MonoBehaviour
 
         //Camera.main.transform.position = new Vector3(Mathf.Clamp(transform.position.x, camLeft, camRight), Mathf.Clamp(transform.position.y, camBottom, camTop), -10);
 
+        //サブスクリーンスクロール
+        if(subScreen != null) //null（何もない） でなければ
+        {
+            y = subScreen.transform.position.y;
+            Vector3 subpos = new Vector3(x / 2.0f, y, subScreen.transform.position.z);
+            subScreen.transform.position = subpos;
+        }
 
 
     }
