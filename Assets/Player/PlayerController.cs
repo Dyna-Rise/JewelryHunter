@@ -47,6 +47,8 @@ public class PlayerController : MonoBehaviour
     public bool isForceScrollY = false; //Y方向の強制スクロールフラグ
     public float forceScrollSpeedY = 0.5f; //1秒間で動かすY距離
 
+    public int score = 0; //スコア
+
     void Start()
     {
         rbody = this.GetComponent<Rigidbody2D>();   // Rigidbody2Dを取ってくる
@@ -181,6 +183,13 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.tag == "Dead")
         {
             GameOver();     // ゲームオーバー
+        }
+        else if (collision.gameObject.tag == "ScoreItem")
+        {
+            // スコアアイテム
+            ScoreItem item = collision.gameObject.GetComponent<ScoreItem>();  // ScoreItemを得る			
+            score = item.itemdata.value;                // スコアを得る
+            Destroy(collision.gameObject);              // アイテム削除する
         }
     }
     // ゴール

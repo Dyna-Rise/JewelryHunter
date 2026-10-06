@@ -22,6 +22,11 @@ public class GameManager : MonoBehaviour
     public GameObject timeText; //時間テキスト
     TimeController timeCnt; //TimeControllerコンポーネント
 
+    //スコア追加
+    public GameObject scoreText; //スコアテキスト
+    public static int totalScore; //合計スコア
+    public int stageScore = 0; //ステージスコア
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -38,6 +43,8 @@ public class GameManager : MonoBehaviour
                 timeBar.SetActive(false); //UIを隠す
             }
         }
+
+        UpdateScore(); //スコアUI表示更新
     }
 
     // Update is called once per frame
@@ -64,7 +71,14 @@ public class GameManager : MonoBehaviour
             if(timeCnt != null)
             {
                 timeCnt.isTimeOver = true; //カウント停止
+                //ボーナススコア追加
+                int time = (int)timeCnt.displayTime;
+                totalScore += time * 10;
             }
+            //ステージスコア更新
+            totalScore += stageScore;
+            stageScore = 0;
+            UpdateScore(); //スコアUI表示更新
         }
         else if (PlayerController.gameState == GameState.GameOver)
         {
@@ -88,7 +102,37 @@ public class GameManager : MonoBehaviour
         }
         else if (PlayerController.gameState == GameState.InGame)
         {
-            
+            //ゲーム中
+            //「Player」タグがついているオブジェクトを参照
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            //PlayerオブジェクトのPlayerControllerコンポーネントを取得
+            PlayerController playerCnt = player.GetComponent<PlayerController>();
+
+            //時間制限
+            //UIのタイムを更新
+            if(timeCnt != null)
+            {
+                if(timeCnt.gameTime > 0.0f)
+                {
+                    //整数に代入することで小数を切り捨て
+                    int time = (int)timeCnt.displayTime;
+                    timeText.GetComponent<TextMeshProUGUI>().text = time.ToString();
+
+                    //タイムオーバー
+                    if(time == 0)
+                    {
+                        playerCnt.GameOver(); //ゲームオーバー処理
+                    }
+                }
+            }
+
+            //スコア追加
+            if(playerCnt.score != 0)
+            {
+                stageScore += playerCnt.score;
+                playerCnt.score = 0;
+                UpdateScore(); //スコアUI表示更新
+            }
         }
     }
 
@@ -97,6 +141,13 @@ public class GameManager : MonoBehaviour
     {
         //テキストではハイライトされていませんがここも編集！テキストをみて完成させましょう
         mainImage.SetActive(false); //オブジェクトを非表示
+    }
+
+    //スコアUI表示更新
+    void UpdateScore()
+    {
+        int score = stageScore + totalScore;
+        scoreText.GetComponent<TextMeshProUGUI>().text = score.ToString();
     }
 
     //リスタート
