@@ -8,7 +8,7 @@ public class CannonController : MonoBehaviour
     public float length = 8.0f;             //範囲
 
     GameObject player;                      //プレイヤー
-    Transform gateTransform;                //発射口のTransform
+    Transform gateTransform;
     float passedTimes = 0;                  //経過時間
                                             //距離チェック
     // Start is called once before the first execution of Update after the MonoBehaviour is created
